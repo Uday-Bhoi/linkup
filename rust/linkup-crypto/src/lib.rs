@@ -40,6 +40,12 @@ pub struct NodeIdentity {
     signing_key: SigningKey,
 }
 
+impl Default for NodeIdentity {
+    fn default() -> Self {
+        Self::generate()
+    }
+}
+
 impl NodeIdentity {
     /// Generate a fresh random device identity keypair using OS entropy
     pub fn generate() -> Self {

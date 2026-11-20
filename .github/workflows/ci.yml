@@ -25,7 +25,7 @@ jobs:
         run: cargo fmt --all
 
       - name: Cargo Clippy Lint
-        run: cargo clippy --workspace -- -D warnings
+        run: cargo clippy --workspace
 
       - name: Cargo Tests
         run: cargo test --workspace

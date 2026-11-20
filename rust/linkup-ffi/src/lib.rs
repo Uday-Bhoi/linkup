@@ -123,3 +123,9 @@ impl LinkUpCoreEngineFFI {
         packet.serialize().map_err(|e| FfiError::SerializationFailed(e.to_string()))
     }
 }
+
+impl Default for LinkUpCoreEngineFFI {
+    fn default() -> Self {
+        Self::new()
+    }
+}

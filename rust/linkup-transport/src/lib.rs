@@ -93,6 +93,12 @@ pub struct TransportManager {
     listeners: Vec<Arc<dyn TransportEventListener>>,
 }
 
+impl Default for TransportManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TransportManager {
     pub fn new() -> Self {
         Self {

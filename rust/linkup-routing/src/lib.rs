@@ -58,7 +58,7 @@ impl RoutingEngine {
 
     /// Register a peer disconnection
     pub fn on_peer_disconnected(&mut self, peer_id: &[u8; 32]) {
-        self.connected_peers.remove(recipient_or_peer(peer_id));
+        self.connected_peers.remove(peer_id);
     }
 
     /// Process incoming mesh packet through Staged Pipeline
@@ -92,9 +92,7 @@ impl RoutingEngine {
     }
 }
 
-fn recipient_or_peer(id: &[u8; 32]) -> &[u8; 32] {
-    id
-}
+
 
 #[cfg(test)]
 mod tests {
