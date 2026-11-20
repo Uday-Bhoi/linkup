@@ -1,0 +1,19 @@
+[package]
+name = "linkup-ffi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+uniffi = "0.28"
+thiserror = "1.0"
+linkup-protocol = { path = "../linkup-protocol" }
+linkup-crypto = { path = "../linkup-crypto" }
+linkup-transport = { path = "../linkup-transport" }
+linkup-storage = { path = "../linkup-storage" }
+linkup-routing = { path = "../linkup-routing" }
+
+[build-dependencies]
+uniffi = { version = "0.28", features = ["build"] }

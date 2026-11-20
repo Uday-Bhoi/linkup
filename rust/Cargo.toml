@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "linkup-protocol",
+    "linkup-crypto",
+    "linkup-transport",
+    "linkup-storage",
+    "linkup-routing",
+    "linkup-ffi",
+]

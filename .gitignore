@@ -1,0 +1,60 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+bin/
+gen/
+out/
+build/
+**/build/
+
+# Gradle files
+.gradle/
+**/.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Signing files
+*.jks
+*.keystore
+
+# Android Studio / IntelliJ IDEA
+*.iml
+.idea/
+*.ipr
+*.iws
+
+# Android SDK & Local properties
+local.properties
+**/local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin
+.kotlin/
+*.log
+
+# Rust / Cargo
+**/target/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Visual Studio Code
+.vscode/
+
+# Agent & Workspace artifacts
+.artifacts/
