@@ -21,6 +21,9 @@ pub enum FfiError {
 
     #[error("Routing error: {0}")]
     RoutingFailed(String),
+
+    #[error("Invalid byte length: {0}")]
+    InvalidLength(String),
 }
 
 /// FFI High-Level Engine Manager
@@ -47,31 +50,38 @@ impl LinkUpCoreEngineFFI {
 
     /// Restore engine from existing 32-byte secret key seed
     #[uniffi::constructor]
-    pub fn from_secret_seed(seed: [u8; 32]) -> Self {
-        let identity = NodeIdentity::from_bytes(&seed);
+    pub fn from_secret_seed(seed: Vec<u8>) -> Result<Self, FfiError> {
+        let seed_bytes: [u8; 32] = seed
+            .try_into()
+            .map_err(|_| FfiError::InvalidLength("Seed must be exactly 32 bytes".to_string()))?;
+        let identity = NodeIdentity::from_bytes(&seed_bytes);
         let pub_key = identity.public_key_bytes();
         let routing_engine = RoutingEngine::new(pub_key, 1000, 50);
 
-        Self {
+        Ok(Self {
             identity,
             routing_engine: Mutex::new(routing_engine),
-        }
+        })
     }
 
     /// Return local device 32-byte Ed25519 Public Key
-    pub fn get_public_key(&self) -> [u8; 32] {
-        self.identity.public_key_bytes()
+    pub fn get_public_key(&self) -> Vec<u8> {
+        self.identity.public_key_bytes().to_vec()
     }
 
     /// Sign payload bytes returning 64-byte signature
-    pub fn sign_payload(&self, payload: Vec<u8>) -> [u8; 64] {
-        self.identity.sign(&payload)
+    pub fn sign_payload(&self, payload: Vec<u8>) -> Vec<u8> {
+        self.identity.sign(&payload).to_vec()
     }
 
     /// Register a newly connected peer node ID over radio transport
-    pub fn on_peer_connected(&self, peer_id: [u8; 32]) -> Result<Vec<Vec<u8>>, FfiError> {
+    pub fn on_peer_connected(&self, peer_id: Vec<u8>) -> Result<Vec<Vec<u8>>, FfiError> {
+        let peer_array: [u8; 32] = peer_id
+            .try_into()
+            .map_err(|_| FfiError::InvalidLength("Peer ID must be exactly 32 bytes".to_string()))?;
+
         let mut engine = self.routing_engine.lock().map_err(|_| FfiError::LockPoisoned)?;
-        let flushed_packets = engine.on_peer_connected(peer_id);
+        let flushed_packets = engine.on_peer_connected(peer_array);
 
         let mut serialized_list = Vec::new();
         for packet in flushed_packets {
@@ -100,19 +110,26 @@ impl LinkUpCoreEngineFFI {
         Ok(decision_summary.to_string())
     }
 
-    /// Create and sign a outgoing mesh packet to recipient node ID
+    /// Create and sign an outgoing mesh packet to recipient node ID
     pub fn create_outgoing_packet(
         &self,
-        recipient_id: [u8; 32],
-        packet_id: [u8; 16],
+        recipient_id: Vec<u8>,
+        packet_id: Vec<u8>,
         payload: Vec<u8>,
     ) -> Result<Vec<u8>, FfiError> {
+        let recipient_array: [u8; 32] = recipient_id
+            .try_into()
+            .map_err(|_| FfiError::InvalidLength("Recipient ID must be exactly 32 bytes".to_string()))?;
+        let packet_id_array: [u8; 16] = packet_id
+            .try_into()
+            .map_err(|_| FfiError::InvalidLength("Packet ID must be exactly 16 bytes".to_string()))?;
+
         let header = PacketHeader::new(
             PacketType::DirectMessage,
             PacketFlags::new(PacketFlags::DIRECT_MESSAGE | PacketFlags::ENCRYPTED),
             self.identity.public_key_bytes(),
-            recipient_id,
-            packet_id,
+            recipient_array,
+            packet_id_array,
             1700000000,
             payload.len() as u32,
         );
