@@ -6,7 +6,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-purple.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-BOM%202026.02.01-blue.svg)](https://developer.android.com/jetpack/compose)
 [![Rust](https://img.shields.io/badge/Rust-2021%20Edition-orange.svg)](https://www.rust-lang.org)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#-license)
 
 ---
 
@@ -77,19 +77,25 @@ linkup/
 
 ### Staged Mesh Routing Pipeline
 
-```mermaid
-flowchart TD
-    A[Incoming Radio Packet] --> B{Magic Header & Version Valid?}
-    B -- No --> C[Drop: Invalid Packet]
-    B -- Yes --> D{Seen in Dedup Cache?}
-    D -- Yes --> E[Drop: Duplicate Loop]
-    D -- No --> F{Recipient == Local Node?}
-    F -- Yes --> G[Decrypt ChaCha20-Poly1305 -> Deliver to UI]
-    F -- No --> H{TTL > 1?}
-    H -- No --> I[Drop: Expired TTL]
-    H -- Yes --> J{Recipient Online?}
-    J -- Yes --> K[Decrement TTL, Increment Hop -> Relay to Peer]
-    J -- No --> L[Enqueue in Store-and-Forward Cache]
+```text
+[ Incoming Radio Packet ]
+           │
+           ▼
+[ Magic Header & Version Check ] ──(Invalid)──► [ Drop: Invalid Packet ]
+           │ (Valid)
+           ▼
+[ LRU Deduplication Cache ] ───────(Seen)─────► [ Drop: Duplicate Loop ]
+           │ (New Packet)
+           ▼
+[ Recipient Check ] ──────────(Matches Local)─► [ Decrypt ChaCha20-Poly1305 & Deliver to UI ]
+           │ (Different Node)
+           ▼
+[ TTL Check (TTL > 1) ] ───────────(TTL <= 1)─► [ Drop: Expired TTL ]
+           │ (TTL Valid)
+           ▼
+[ Destination Node Reachability ]
+     ├── (Peer is Online)  ──► Decrement TTL, Increment Hop ──► [ Relay to Next Peer ]
+     └── (Peer is Offline) ──► [ Enqueue into Store-and-Forward Cache ]
 ```
 
 ---
@@ -203,4 +209,4 @@ We welcome contributions from the community! To contribute:
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is open-source under the MIT License.
