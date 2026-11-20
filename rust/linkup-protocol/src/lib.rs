@@ -42,9 +42,9 @@ pub struct PacketFlags(pub u8);
 
 impl PacketFlags {
     pub const DIRECT_MESSAGE: u8 = 1 << 0;
-    pub const BROADCAST: u8       = 1 << 1;
-    pub const ACK_REQUEST: u8     = 1 << 2;
-    pub const ENCRYPTED: u8       = 1 << 3;
+    pub const BROADCAST: u8 = 1 << 1;
+    pub const ACK_REQUEST: u8 = 1 << 2;
+    pub const ENCRYPTED: u8 = 1 << 3;
 
     pub fn new(flags: u8) -> Self {
         Self(flags)

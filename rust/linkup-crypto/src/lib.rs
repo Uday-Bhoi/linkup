@@ -12,7 +12,7 @@ use hkdf::Hkdf;
 use rand::rngs::OsRng;
 use sha2::Sha256;
 use thiserror::Error;
-use x25519_dalek::{Ephemeralsecret, PublicKey as X25519PublicKey, StaticSecret};
+use x25519_dalek::{PublicKey as X25519PublicKey, StaticSecret};
 
 #[derive(Error, Debug, PartialEq)]
 pub enum CryptoError {
