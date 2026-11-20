@@ -14,6 +14,3 @@ linkup-crypto = { path = "../linkup-crypto" }
 linkup-transport = { path = "../linkup-transport" }
 linkup-storage = { path = "../linkup-storage" }
 linkup-routing = { path = "../linkup-routing" }
-
-[build-dependencies]
-uniffi = { version = "0.28", features = ["build"] }
